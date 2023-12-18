@@ -16,7 +16,7 @@
 	<PropertyGroup>
 		<!-- This should point to wherever your games primary EXE is -->
 		<TheLongDarkPath>O:\SteamLibrary\steamapps\common\TheLongDark</TheLongDarkPath>
-		<ReleaseFolderPath>P:\Modding\The Long Dark\MyMods\StackManager\Release</ReleaseFolderPath>
+		<ReleaseFolderPath>P:\Modding\The Long Dark\Github\MyMods\StackManager\Release</ReleaseFolderPath>
 	</PropertyGroup>
 
 	<!-- List of used references -->
