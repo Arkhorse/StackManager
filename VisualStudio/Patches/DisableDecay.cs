@@ -1,6 +1,4 @@
-﻿using StackManager.Utilities;
-using StackManager.Utilities.Logger;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace StackManager.Patches
 {
@@ -19,13 +17,15 @@ namespace StackManager.Patches
 
             if (Settings.Instance.AddStack)
             {
-                if (Main.Config.CustomHandled.Contains(name))
+                if (Main.Config.AddStackableComponent.Contains(name))
                 {
+                    Main.Logger.Log($"AddStack: {name}", FlaggedLoggingLevel.Debug);
+
                     StackableItem stack = __instance.gameObject.AddComponent<StackableItem>();
 
                     stack.m_DefaultUnitsInItem                  = 1;
-                    stack.m_LocalizedSingleUnitText             = Extensions.CreateLocalizedString(__instance.GetDisplayNameWithoutConditionForInventoryInterfaces());
-                    stack.m_LocalizedMultipleUnitText           = Extensions.CreateLocalizedString(__instance.GetDisplayNameWithoutConditionForInventoryInterfaces());
+                    //stack.m_LocalizedSingleUnitText             = Extensions.CreateLocalizedString(__instance.GetDisplayNameWithoutConditionForInventoryInterfaces());
+                    //stack.m_LocalizedMultipleUnitText           = Extensions.CreateLocalizedString(__instance.GetDisplayNameWithoutConditionForInventoryInterfaces());
                     stack.m_StackConditionDifferenceConstraint  = 100f;
                     stack.m_StackSpriteName                     = string.Empty;
                     stack.m_ShareStackWithGear                  = Array.Empty<StackableItem>();
@@ -36,99 +36,48 @@ namespace StackManager.Patches
                     return;
                 }
             }
-            else
-            {
-                if (Main.Config.CustomHandled.Contains(name))
-                {
-                    StackableItem? item = __instance.GetComponent<StackableItem>();
-
-                    if (item != null)
-                    {
-                        __instance.m_StackableItem = null;
-
-                        try
-                        {
-                            UnityEngine.Object.Destroy(item, 0.1f);
-                        }
-                        catch
-                        {
-                            Logging.LogError($"Attempting to destroy the StackableItem component for item \"{name}\" failed");
-                            throw;
-                        }
-                    }
-                }
-            }
-
-            // functional items cant have stackable functions added as of 2.25
-            /*
-            if (CommonUtilities.NormalizeName(__instance.name) == "GEAR_FlareA")
-            {
-                //if (__instance.IsLitFlare()) return;
-                //if (__instance.GetComponent<StackableItem>() != null) return;
-
-                //StackableItem stack = __instance.gameObject.AddComponent<StackableItem>();
-
-                //stack.m_DefaultUnitsInItem                      = 1;
-                //stack.m_LocalizedSingleUnitText                 = Extensions.CreateLocalizedString(__instance.GetDisplayNameWithoutConditionForInventoryInterfaces());
-                //stack.m_LocalizedMultipleUnitText               = Extensions.CreateLocalizedString(__instance.GetDisplayNameWithoutConditionForInventoryInterfaces());
-                //stack.m_StackConditionDifferenceConstraint      = 0.01f;
-                //stack.m_StackSpriteName                         = string.Empty;
-                //stack.m_ShareStackWithGear                      = Array.Empty<StackableItem>();
-                //stack.m_Units = 1;
-
-                //__instance.m_StackableItem = stack;
-                return;
-            }
-
-            if (CommonUtilities.NormalizeName(__instance.name) == "GEAR_SprayPaintCan")
-            {
-                //StackableItem stack = __instance.gameObject.AddComponent<StackableItem>();
-
-                //stack.m_DefaultUnitsInItem                      = 1;
-                //stack.m_LocalizedSingleUnitText                 = Extensions.CreateLocalizedString(__instance.GetDisplayNameWithoutConditionForInventoryInterfaces());
-                //stack.m_LocalizedMultipleUnitText               = Extensions.CreateLocalizedString(__instance.GetDisplayNameWithoutConditionForInventoryInterfaces());
-                //stack.m_StackConditionDifferenceConstraint      = 0.01f;
-                //stack.m_StackSpriteName                         = string.Empty;
-                //stack.m_ShareStackWithGear                      = Array.Empty<StackableItem>();
-
-                //if (stack.m_Units == 0) stack.m_Units = 1;
-
-                //__instance.m_StackableItem = stack;
-                return;
-            }
-
-            if (CommonUtilities.NormalizeName(__instance.name) == "GEAR_SewingKit")
-            {
-                //StackableItem stack = __instance.gameObject.AddComponent<StackableItem>();
-
-                //stack.m_DefaultUnitsInItem                      = 1;
-                //stack.m_LocalizedSingleUnitText                 = Extensions.CreateLocalizedString(__instance.GetDisplayNameWithoutConditionForInventoryInterfaces());
-                //stack.m_LocalizedMultipleUnitText               = Extensions.CreateLocalizedString(__instance.GetDisplayNameWithoutConditionForInventoryInterfaces());
-                //stack.m_StackConditionDifferenceConstraint      = 0.01f;
-                //stack.m_StackSpriteName                         = string.Empty;
-                //stack.m_ShareStackWithGear                      = Array.Empty<StackableItem>();
-
-                //if (stack.m_Units == 0) stack.m_Units = 1;
-
-                //__instance.m_StackableItem = stack;
-                return;
-            }
-            */
         }
 
         public static void Postfix(GearItem __instance)
         {
             if (__instance == null) return;
             if (string.IsNullOrWhiteSpace(__instance.name)) return;
+            //if (__instance.gameObject.GetComponent<StackableItem>() != null) return;
             if (Main.Config == null) return;
 
             string name = CommonUtilities.NormalizeName(__instance.name);
+            StackableItem? item = __instance.gameObject.GetComponent<StackableItem>();
 
-            if (!Main.Config.CustomHandled.Contains(name))
+      //      if (!Settings.Instance.AddStack)
+      //      {
+      //          if (Main.Config.AddStackableComponent.Contains(name))
+      //          {
+      //              if (item == null)
+      //              {
+      //                  __instance.gameObject.AddComponent<StackableItem>();
+      //              }
+      ////              if (item != null)
+      ////              {
+						////Main.Logger.Log($"AddStack REMOVE: {name}", FlaggedLoggingLevel.Debug);
+      ////                  __instance.m_StackableItem = null;
+
+      ////                  try
+      ////                  {
+      ////                      UnityEngine.Object.Destroy(item, 0.1f);
+      ////                  }
+      ////                  catch
+      ////                  {
+						////	Main.Logger.Log($"Attempting to destroy the StackableItem component for item \"{name}\" failed", FlaggedLoggingLevel.Debug);
+      ////                      throw;
+      ////                  }
+      ////              }
+      //          }
+      //      }
+
+            if (Main.Config.STACK_MERGE.Contains(name))
             {
-                if (__instance.gameObject.GetComponent<StackableItem>() != null)
+                if (item != null)
                 {
-                    StackableItem item = __instance.gameObject.GetComponent<StackableItem>();
                     item.m_StackConditionDifferenceConstraint = 100f;
                 }
             }
