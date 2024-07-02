@@ -44,5 +44,15 @@ namespace StackManager.Utilities
 
             return first && second && third && fourth;
         }
+
+		/// <summary>
+		/// Gets the GearItem PDID
+		/// </summary>
+		/// <param name="gi"></param>
+		/// <returns></returns>
+		public static string? GetGearItemPDID(GearItem gi)
+        {
+            return gi.GetComponent<ObjectGuid>().PDID;
+        }
     }
 }
