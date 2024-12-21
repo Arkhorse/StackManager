@@ -14,7 +14,7 @@ namespace StackManager
 		#region Config File
 		public static Config Config { get; set; } = new();
 		public static string ConfigFile { get; } = Path.Combine(MelonEnvironment.ModsDirectory, "StackManager", "config.json");
-		public static Version CurrentVersion { get; } = new(1,0,0);
+		public static Version CurrentVersion { get; } = new(1,0,1);
 		#endregion
 		#region MelonMod Methods
 		public override void OnInitializeMelon()
@@ -31,7 +31,7 @@ namespace StackManager
 				if (SetupDefaultConfig()) JsonFile.Save<Config>(ConfigFile, Config);
 			}
 
-			Config = JsonFile.Load<Config>(ConfigFile);
+			Config ??= JsonFile.Load<Config>(ConfigFile);
 
 			if (Config?.ConfigurationVersion != CurrentVersion) UpdateConfig();
 		}
@@ -40,6 +40,7 @@ namespace StackManager
 		public static bool UpdateConfig()
 		{
 			File.Delete(ConfigFile);
+			Config.ConfigurationVersion = CurrentVersion;
 			if (SetupDefaultConfig()) JsonFile.Save<Config>(ConfigFile, Config);
 
 			return true;
@@ -47,6 +48,7 @@ namespace StackManager
 
 		public static bool SetupDefaultConfig()
 		{
+			Config = new();
 			Config.ConfigurationVersion = CurrentVersion;
 
 			Config.STACK_MERGE = new()
@@ -66,7 +68,7 @@ namespace StackManager
 				"GEAR_PackMatches",
 				"GEAR_Potato",
 				"GEAR_RabbitPeltDried",
-				"GEAR_RecycledCan",
+				//"GEAR_RecycledCan",
 				"GEAR_StumpRemover",
 				"GEAR_WolfPeltDried",
 				"GEAR_WoodMatches"
@@ -76,14 +78,14 @@ namespace StackManager
 			{
 				"GEAR_CoffeeTin",
 				"GEAR_GreenTeaPackage",
-				"GEAR_Potato",
-				"GEAR_RecycledCan"
+				//"GEAR_RecycledCan",
+				"GEAR_Potato"
 			};
 
 			Config.AddStackableComponent = new()
 			{
 				"GEAR_Potato",
-				"GEAR_RecycledCan",
+				//"GEAR_RecycledCan",
 				"GEAR_StumpRemover"
 			};
 
