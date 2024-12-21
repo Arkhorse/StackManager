@@ -23,7 +23,7 @@
 	<ItemGroup>
 		<!-- This is the base reference. MUST EXIST -->
 		<PackageReference Include="Lib.Harmony" Version="2.3.3" />
-		<PackageReference Include="STBlade.Modding.TLD.Il2CppAssemblies.Windows" Version="2.30.0" />
+		<PackageReference Include="STBlade.Modding.TLD.Il2CppAssemblies.Windows" Version="2.36.0" />
 		<!-- This is only if you use the ModSettings -->
 		<PackageReference Include="STBlade.Modding.TLD.ModSettings" Version="1.9.0" />
 	</ItemGroup>
