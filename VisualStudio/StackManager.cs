@@ -23,11 +23,13 @@ namespace StackManager
 
 			if (!Directory.Exists(Path.Combine(MelonEnvironment.ModsDirectory, "StackManager")))
 			{
+				Logger.Log("Directory does not exist, making", FlaggedLoggingLevel.Debug);
 				Directory.CreateDirectory(Path.Combine(MelonEnvironment.ModsDirectory, "StackManager"));
 				return;
 			}
 			if (!File.Exists(ConfigFile))
 			{
+				Logger.Log("file does not exist, making", FlaggedLoggingLevel.Debug);
 				if (SetupDefaultConfig()) JsonFile.Save<Config>(ConfigFile, Config);
 			}
 
@@ -48,6 +50,7 @@ namespace StackManager
 
 		public static bool SetupDefaultConfig()
 		{
+			Logger.Log("Making default config", FlaggedLoggingLevel.Debug);
 			Config = new();
 			Config.ConfigurationVersion = CurrentVersion;
 
