@@ -65,10 +65,10 @@
 
 			Main.Logger.Log($"TargetCondition:{TargetCondition}", FlaggedLoggingLevel.Debug);
 
-			if (Main.PostfixTrack.PostFixTrack == true)
-			{
-				SetPostFix(null, null, 0, 0, true);
-			}
+			//if (Main.PostfixTrack.PostFixTrack == true)
+			//{
+			//	SetPostFix(null, null, 0, 0, true);
+			//}
 
 			if (Main.Config.Advanced.Contains(gearToAdd.name))
 			{
@@ -78,6 +78,10 @@
 
 			targetStack.CurrentHP = Mathf.Clamp(TargetCondition * targetStack.m_GearItemData.MaxHP, 0, targetStack.m_GearItemData.MaxHP);
 			targetStack.m_StackableItem.m_Units += units;
+			if (targetStack.m_StackableItem.m_ShareStackWithGear == null)
+			{
+				targetStack.m_StackableItem.m_ShareStackWithGear = new(0);
+			}
 		}
 
 		public static bool CanBeMerged(GearItem? target, GearItem? item)
@@ -97,10 +101,11 @@
 
 		public static bool Do(GearItem gearToAdd, float normalizedCondition, int numUnits)
 		{
-			if (!CanOperate(gearToAdd, normalizedCondition)) return true;
-
 			//GearItem? targetStack = null;
 			GearItem? targetStack = StackableItem.GetClosestMatchStackable(GameManager.GetInventoryComponent().m_Items, gearToAdd, normalizedCondition);
+
+			//if (ComplexLogger.Main.CurrentLevel.HasFlag(FlaggedLoggingLevel.Debug)) LogEverthing(gearToAdd, targetStack, normalizedCondition, numUnits);
+			if (!CanOperate(gearToAdd, normalizedCondition)) return true;
 
 			if (targetStack == null)
 			{
@@ -211,49 +216,66 @@
 
 		public static void LogEverthing(GearItem? gearToAdd, GearItem? targetStack, float normalizedCondition, int units)
 		{
-			if (gearToAdd == null && targetStack == null)
+			System.Text.StringBuilder sb = new();
+
+			//if (gearToAdd == null && targetStack == null)
+			//{
+			//	Main.Logger.Log("gearToAdd:null", FlaggedLoggingLevel.Always);
+			//	Main.Logger.Log("targetStack:null", FlaggedLoggingLevel.Always);
+			//	return;
+			//}
+			if (gearToAdd == null)
 			{
-				Main.Logger.Log("gearToAdd:null", FlaggedLoggingLevel.Always);
-				Main.Logger.Log("targetStack:null", FlaggedLoggingLevel.Always);
-				return;
+				sb.AppendLine("gearToAdd:null");
+				//Main.Logger.Log("gearToAdd:null", FlaggedLoggingLevel.Always);
+				//return;
 			}
-			else if (gearToAdd == null)
+			if (targetStack == null)
 			{
-				Main.Logger.Log("gearToAdd:null", FlaggedLoggingLevel.Always);
-				return;
-			}
-			else if (targetStack == null)
-			{
-				Main.Logger.Log("targetStack:null", FlaggedLoggingLevel.Always);
-				return;
+				sb.AppendLine("targetStack:null");
+				//Main.Logger.Log("targetStack:null", FlaggedLoggingLevel.Always);
+				//return;
 			}
 
-			float difference			= Math.Abs(gearToAdd.CurrentHP - targetStack.CurrentHP);
-			string gearToAddName		= "NULL";
-			string targetStackName		= "NULL";
-			object? gearToAddUID		= CommonUtilities.GetGearItemPDID(gearToAdd);
-			object? targetStackUID		= CommonUtilities.GetGearItemPDID(targetStack);
+			float difference = 0f;
+			object? gearToAddUID = null;
+			object? targetStackUID = null;
+			string gearToAddName = string.Empty;
+			string targetStackName = string.Empty;
 
-			try
+			if (!(gearToAdd == null) && !(targetStack == null))
 			{
-				if (!string.IsNullOrWhiteSpace(gearToAdd.name)) gearToAddName = gearToAdd.name;
+				difference = Math.Abs(gearToAdd.CurrentHP - targetStack.CurrentHP);
+				gearToAddUID = CommonUtilities.GetGearItemPDID(gearToAdd);
+				targetStackUID = CommonUtilities.GetGearItemPDID(targetStack);
+				gearToAddName = string.IsNullOrWhiteSpace(gearToAdd.name) ? gearToAdd.name : "NULL";
+				targetStackName = string.IsNullOrWhiteSpace(targetStack.name) ? targetStack.name : "NULL";
 			}
-			catch { }
 
-			try
-			{
-				if (!string.IsNullOrWhiteSpace(targetStack.name)) targetStackName = targetStack.name;
-			}
-			catch { }
+			sb.AppendLine("Gear to add: ");
+			sb.Append('x');
+			sb.Append(units);
+			sb.Append(' ');
+			sb.Append(gearToAddName);
+			sb.Append(' ');
+			sb.Append(gearToAddUID);
+			sb.AppendLine("Target stack: ");
+			sb.Append(targetStackName);
+			sb.Append(' ');
+			sb.Append(targetStackUID);
+			sb.AppendLine("Health Difference: ");
+			sb.Append(difference);
 
 			Main.Logger.Log("Begin Detailed Log", FlaggedLoggingLevel.Always, LoggingSubType.IntraSeparator);
-			Main.Logger.Log($"LogEverthing({gearToAddName}, {targetStackName}, {normalizedCondition}, {units}) Difference in HP:{difference}", FlaggedLoggingLevel.Always);
+			//Main.Logger.Log($"LogEverthing({gearToAddName}, {targetStackName}, {normalizedCondition}, {units}) Difference in HP:{difference}", FlaggedLoggingLevel.Always);
 
-			Main.Logger.Log($"{gearToAddName}:{gearToAddUID}", FlaggedLoggingLevel.Always);
-			Main.Logger.Log($"\tCurrentHP:{gearToAdd.CurrentHP}, Normalized:{gearToAdd.GetNormalizedCondition()}", FlaggedLoggingLevel.Always);
+			//Main.Logger.Log($"{gearToAddName}:{gearToAddUID}", FlaggedLoggingLevel.Always);
+			//Main.Logger.Log($"\tCurrentHP:{gearToAdd.CurrentHP}, Normalized:{gearToAdd.GetNormalizedCondition()}", FlaggedLoggingLevel.Always);
 
-			Main.Logger.Log($"{targetStackName}:{targetStackUID}", FlaggedLoggingLevel.Always);
-			Main.Logger.Log($"\tCurrentHP:{targetStack.CurrentHP}, Normalized:{targetStack.GetNormalizedCondition()}, m_StackableItem.m_Units:{targetStack.m_StackableItem.m_Units}", FlaggedLoggingLevel.Always);
+			//Main.Logger.Log($"{targetStackName}:{targetStackUID}", FlaggedLoggingLevel.Always);
+			//Main.Logger.Log($"\tCurrentHP:{targetStack.CurrentHP}, Normalized:{targetStack.GetNormalizedCondition()}, m_StackableItem.m_Units:{targetStack.m_StackableItem.m_Units}", FlaggedLoggingLevel.Always);
+
+			Main.Logger.Log(sb.ToString(), FlaggedLoggingLevel.Always);
 
 			Main.Logger.Log("End Detailed Log", FlaggedLoggingLevel.Always, LoggingSubType.IntraSeparator);
 		}
