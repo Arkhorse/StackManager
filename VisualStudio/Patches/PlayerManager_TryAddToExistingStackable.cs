@@ -10,6 +10,7 @@
 	{
 		public static bool Prefix(ref GearItem gearToAdd, float normalizedCondition, int numUnits, ref GearItem existingGearItem)
 		{
+			if (GameManager.IsMainMenuActive()) return true;
 			if (gearToAdd.gameObject.GetComponent<StackableItem>() != null) return true;
 			return StackingUtilities.Do(gearToAdd, normalizedCondition, numUnits, ref existingGearItem);
 		}
