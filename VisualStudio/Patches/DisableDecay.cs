@@ -8,6 +8,7 @@ namespace StackManager.Patches
 		public static void Prefix(GearItem __instance)
 		{
 			if (__instance == null) return;
+			if (GameManager.IsMainMenuActive()) return;
 			if (string.IsNullOrWhiteSpace(__instance.name)) return;
 			if (__instance.m_StackableItem != null) return;
 			if (__instance.gameObject.GetComponent<StackableItem>() != null) return;
@@ -41,6 +42,7 @@ namespace StackManager.Patches
 		public static void Postfix(GearItem __instance)
 		{
 			if (__instance == null) return;
+			if (GameManager.IsMainMenuActive()) return;
 			if (string.IsNullOrWhiteSpace(__instance.name)) return;
 			//if (__instance.gameObject.GetComponent<StackableItem>() != null) return;
 			if (Main.Config == null) return;
